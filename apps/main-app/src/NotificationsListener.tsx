@@ -14,13 +14,13 @@ const NotificationsListener = () => {
 
     window.addEventListener(
       "app:notifications",
-      handleNotification as EventListener
+      handleNotification as EventListener,
     );
 
     return () => {
       window.removeEventListener(
         "app:notifications",
-        handleNotification as EventListener
+        handleNotification as EventListener,
       );
     };
   }, []);

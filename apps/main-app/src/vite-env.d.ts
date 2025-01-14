@@ -9,24 +9,24 @@ declare module "virtual:__federation__" {
 
   export function __federation_method_setRemote(
     name: string,
-    config: IRemoteConfig
+    config: IRemoteConfig,
   ): void;
 
   export function __federation_method_getRemote(
     name: string,
-    exposedPath: string
+    exposedPath: string,
   ): Promise<unknown>;
 
   export function __federation_method_unwrapDefault(
-    unwrappedModule: unknown
+    unwrappedModule: unknown,
   ): Promise<unknown>;
 
   export function __federation_method_ensure(
-    remoteName: string
+    remoteName: string,
   ): Promise<unknown>;
 
   export function __federation_method_wrapDefault(
     module: unknown,
-    need: boolean
+    need: boolean,
   ): Promise<unknown>;
 }

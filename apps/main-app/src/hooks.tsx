@@ -32,10 +32,10 @@ export const useRemoteComponent = ({
 
         const moduleWrapped = await __federation_method_getRemote(
           remoteName,
-          remoteModulePath
+          remoteModulePath,
         );
         const remoteModule = (await __federation_method_unwrapDefault(
-          moduleWrapped
+          moduleWrapped,
         )) as React.ComponentType;
         setRemoteComponent(() => remoteModule);
       } catch (error) {
@@ -43,7 +43,7 @@ export const useRemoteComponent = ({
         setError(
           error instanceof Error
             ? error
-            : new Error("Failed to load remote component")
+            : new Error("Failed to load remote component"),
         );
       } finally {
         setIsLoading(false);
