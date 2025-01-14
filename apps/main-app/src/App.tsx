@@ -1,5 +1,7 @@
+import React from "react";
 import NotificationsListener from "./NotificationsListener";
 import { useRemoteComponent } from "./hooks";
+import MicroApp3Container from "./MicroApp3Container";
 
 function App() {
   const {
@@ -22,11 +24,16 @@ function App() {
     remoteModulePath: "./App",
   });
 
+  const reactVersion = React.version;
+
   return (
     <div
       style={{ display: "flex", flexDirection: "column", gap: 16, padding: 16 }}
     >
-      <h1>Main App</h1>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <h1>Main App</h1>
+        <p>React version: {reactVersion}</p>
+      </div>
       <NotificationsListener />
       <div style={{ border: "1px solid red" }}>
         {loadingMicroApp1 ? (
@@ -45,6 +52,9 @@ function App() {
         ) : MicroApp2 ? (
           <MicroApp2 />
         ) : null}
+      </div>
+      <div style={{ border: "1px solid green" }}>
+        <MicroApp3Container />
       </div>
     </div>
   );

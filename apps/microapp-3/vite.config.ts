@@ -8,13 +8,14 @@ export default defineConfig({
   plugins: [
     react(),
     federation({
-      name: "microapp-2",
+      name: "microapp-3",
       filename: "remoteEntry.js",
       remotes: { dummyRemote: "dummyRemote.js" },
       exposes: {
-        "./App": "./src/App",
+        // "./App": "./src/App",
+        "./bootstrap": "./src/bootstrap",
       },
-      shared: ["react", "react-dom"],
+      // shared: ["react", "react-dom"],
     }),
     topLevelAwait({
       // The export name of top-level await promise for each chunk module

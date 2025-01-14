@@ -1194,7 +1194,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*":
+"@types/react-dom@npm:^19.0.3":
+  version: 19.0.3
+  resolution: "@types/react-dom@npm:19.0.3"
+  peerDependencies:
+    "@types/react": ^19.0.0
+  checksum: 10c0/3867427b333cbe8cbba496d7cc20ec9676d32c25ae44f4d1263a4129d42e57cf4adf0039ad263432f1215b88075c27d326e7eb4ed646128235d01a76e661d48f
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:*, @types/react@npm:^19.0.7":
   version: 19.0.7
   resolution: "@types/react@npm:19.0.7"
   dependencies:
@@ -4075,6 +4084,29 @@ __metadata:
     globals: "npm:^15.14.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
+    typescript: "npm:~5.6.2"
+    typescript-eslint: "npm:^8.18.2"
+    vite: "npm:6.0.5"
+    vite-plugin-top-level-await: "npm:^1.4.4"
+  languageName: unknown
+  linkType: soft
+
+"microapp-3@workspace:apps/microapp-3":
+  version: 0.0.0-use.local
+  resolution: "microapp-3@workspace:apps/microapp-3"
+  dependencies:
+    "@eslint/js": "npm:^9.17.0"
+    "@originjs/vite-plugin-federation": "npm:^1.3.8"
+    "@types/react": "npm:^19.0.7"
+    "@types/react-dom": "npm:^19.0.3"
+    "@vitejs/plugin-react": "npm:^4.3.4"
+    concurrently: "npm:^9.1.2"
+    eslint: "npm:^9.17.0"
+    eslint-plugin-react-hooks: "npm:^5.0.0"
+    eslint-plugin-react-refresh: "npm:^0.4.16"
+    globals: "npm:^15.14.0"
+    react: "npm:^19.0.0"
+    react-dom: "npm:^19.0.0"
     typescript: "npm:~5.6.2"
     typescript-eslint: "npm:^8.18.2"
     vite: "npm:6.0.5"
