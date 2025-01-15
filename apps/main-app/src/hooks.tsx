@@ -5,104 +5,112 @@ import {
   __federation_method_unwrapDefault,
 } from "virtual:__federation__";
 
-interface RemoteComponentParams {
+interface RemoteModuleParams {
   remoteName: string;
   remoteUrl: string;
   remoteModulePath: string;
 }
 
-export const useRemoteComponent = ({
+const useRemoteModule = <T,>({
   remoteName,
   remoteUrl,
   remoteModulePath,
-}: RemoteComponentParams) => {
-  const [RemoteComponent, setRemoteComponent] =
-    useState<React.ComponentType | null>(null);
+}: RemoteModuleParams): {
+  remoteModule: T | null;
+  isLoading: boolean;
+  error: Error | null;
+} => {
+  const [remoteModule, setRemoteModule] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const loadRemoteComponent = async () => {
+    let canceled = false;
+
+    const loadRemote = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
+        // Register the remote
         __federation_method_setRemote(remoteName, {
           url: () => Promise.resolve(remoteUrl),
           format: "esm",
           from: "vite",
         });
 
+        // Fetch the remote module
         const moduleWrapped = await __federation_method_getRemote(
           remoteName,
           remoteModulePath
         );
-        const remoteModule = (await __federation_method_unwrapDefault(
-          moduleWrapped
-        )) as React.ComponentType;
-        setRemoteComponent(() => remoteModule);
-      } catch (error) {
-        console.error("Failed to load remote component:", error);
-        setError(
-          error instanceof Error
-            ? error
-            : new Error("Failed to load remote component")
-        );
+
+        // If this hook is unmounted mid-fetch, avoid state updates
+        if (canceled) return;
+
+        setRemoteModule(moduleWrapped as T);
+      } catch (err) {
+        console.error("Failed to load remote module:", err);
+        if (!canceled) {
+          setError(
+            err instanceof Error
+              ? err
+              : new Error("Failed to load remote module")
+          );
+        }
       } finally {
-        setIsLoading(false);
+        if (!canceled) {
+          setIsLoading(false);
+        }
       }
     };
 
-    loadRemoteComponent();
+    loadRemote();
+    return () => {
+      canceled = true;
+    };
   }, [remoteName, remoteUrl, remoteModulePath]);
+
+  return { remoteModule, isLoading, error };
+};
+
+export const useRemoteComponent = (params: RemoteModuleParams) => {
+  const { remoteModule, isLoading, error } = useRemoteModule(params);
+  const [RemoteComponent, setRemoteComponent] =
+    useState<React.ComponentType | null>(null);
+
+  useEffect(() => {
+    const unwrap = async () => {
+      if (!remoteModule) return;
+      try {
+        const component = (await __federation_method_unwrapDefault(
+          remoteModule
+        )) as React.ComponentType;
+        setRemoteComponent(() => component);
+      } catch (err) {
+        console.error("Failed to unwrap remote component:", err);
+      }
+    };
+    unwrap();
+  }, [remoteModule]);
 
   return { RemoteComponent, isLoading, error };
 };
 
-type MountFunction = (el: HTMLElement) => void;
-
-export function useRemoteBootstrap({
-  remoteName,
-  remoteUrl,
-  remoteModulePath,
-}: RemoteComponentParams) {
-  const [mountToFn, setMountToFn] = useState<MountFunction | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+export const useRemoteBootstrap = (params: RemoteModuleParams) => {
+  const { remoteModule, isLoading, error } = useRemoteModule(params);
+  const [mountToFn, setMountToFn] = useState<
+    ((el: HTMLElement) => void) | null
+  >(null);
 
   useEffect(() => {
-    async function loadRemote() {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        __federation_method_setRemote(remoteName, {
-          url: () => Promise.resolve(remoteUrl),
-          format: "esm",
-          from: "vite",
-        });
-
-        const moduleWrapped = await __federation_method_getRemote(
-          remoteName,
-          remoteModulePath
-        );
-        const remoteModule = moduleWrapped as {
-          mountTo: MountFunction;
-          [key: string]: any;
-        };
-        setMountToFn(() => remoteModule.mountTo);
-      } catch (err) {
-        console.error("Failed to load remote mount:", err);
-        setError(
-          err instanceof Error ? err : new Error("Failed to load remote mount")
-        );
-      } finally {
-        setIsLoading(false);
-      }
+    if (remoteModule) {
+      const typedModule = remoteModule as {
+        mountTo: (el: HTMLElement) => void;
+      };
+      setMountToFn(() => typedModule.mountTo);
     }
-
-    loadRemote();
-  }, [remoteName, remoteUrl, remoteModulePath]);
+  }, [remoteModule]);
 
   return { mountToFn, isLoading, error };
-}
+};
