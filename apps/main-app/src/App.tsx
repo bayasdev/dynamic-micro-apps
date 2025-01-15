@@ -2,6 +2,7 @@ import React from "react";
 import NotificationsListener from "./NotificationsListener";
 import { useRemoteComponent } from "./hooks";
 import MicroApp3Container from "./MicroApp3Container";
+import { Link } from "react-router";
 
 function App() {
   const {
@@ -30,10 +31,19 @@ function App() {
     <div
       style={{ display: "flex", flexDirection: "column", gap: 16, padding: 16 }}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          gap: 8,
+        }}
+      >
         <h1>Main App</h1>
-        <p>React version: {reactVersion}</p>
+        <Link to="/microapp4">Micro App 4</Link>
       </div>
+      <p>React version: {reactVersion}</p>
       <NotificationsListener />
       <div style={{ border: "1px solid red" }}>
         {loadingMicroApp1 ? (

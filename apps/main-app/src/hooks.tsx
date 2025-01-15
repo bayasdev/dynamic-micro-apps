@@ -100,13 +100,13 @@ export const useRemoteComponent = (params: RemoteModuleParams) => {
 export const useRemoteBootstrap = (params: RemoteModuleParams) => {
   const { remoteModule, isLoading, error } = useRemoteModule(params);
   const [mountToFn, setMountToFn] = useState<
-    ((el: HTMLElement) => void) | null
+    ((el: HTMLElement, basePath?: string) => void) | null
   >(null);
 
   useEffect(() => {
     if (remoteModule) {
       const typedModule = remoteModule as {
-        mountTo: (el: HTMLElement) => void;
+        mountTo: (el: HTMLElement, basePath?: string) => void;
       };
       setMountToFn(() => typedModule.mountTo);
     }
@@ -118,6 +118,7 @@ export const useRemoteBootstrap = (params: RemoteModuleParams) => {
 export interface RemoteBootstrapParams extends RemoteModuleParams {
   LoadingComponent: React.ReactNode;
   ErrorComponent: React.ReactNode;
+  basePath?: string;
 }
 
 export const useRemoteApp = ({
@@ -126,6 +127,7 @@ export const useRemoteApp = ({
   remoteModulePath,
   LoadingComponent,
   ErrorComponent,
+  basePath,
 }: RemoteBootstrapParams) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -137,7 +139,7 @@ export const useRemoteApp = ({
 
   useEffect(() => {
     if (!isLoading && !error && mountToFn && containerRef.current) {
-      mountToFn(containerRef.current);
+      mountToFn(containerRef.current, basePath);
     }
   }, [isLoading, error, mountToFn]);
 
