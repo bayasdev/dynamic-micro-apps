@@ -1,6 +1,10 @@
 import React from "react";
 
-function App() {
+interface AppProps {
+  isEmbedded?: boolean;
+}
+
+function App({ isEmbedded = false }: AppProps) {
   const fireEvent = () => {
     const event = new CustomEvent("app:notifications", {
       detail: {
@@ -25,6 +29,7 @@ function App() {
     >
       <h1>Micro App 3</h1>
       <p>React version: {reactVersion}</p>
+      <p>Embedded: {isEmbedded ? "Yes" : "No"}</p>
       <button onClick={fireEvent}>Fire event</button>
     </div>
   );
