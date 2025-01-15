@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   __federation_method_getRemote,
   __federation_method_setRemote,
@@ -113,4 +113,41 @@ export const useRemoteBootstrap = (params: RemoteModuleParams) => {
   }, [remoteModule]);
 
   return { mountToFn, isLoading, error };
+};
+
+export interface RemoteBootstrapParams extends RemoteModuleParams {
+  LoadingComponent: React.ReactNode;
+  ErrorComponent: React.ReactNode;
+}
+
+export const useRemoteApp = ({
+  remoteName,
+  remoteUrl,
+  remoteModulePath,
+  LoadingComponent,
+  ErrorComponent,
+}: RemoteBootstrapParams) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { mountToFn, isLoading, error } = useRemoteBootstrap({
+    remoteName,
+    remoteUrl,
+    remoteModulePath,
+  });
+
+  useEffect(() => {
+    if (!isLoading && !error && mountToFn && containerRef.current) {
+      mountToFn(containerRef.current);
+    }
+  }, [isLoading, error, mountToFn]);
+
+  if (error) {
+    return <>{ErrorComponent}</>;
+  }
+
+  if (isLoading) {
+    return <>{LoadingComponent}</>;
+  }
+
+  return <div ref={containerRef} />;
 };
